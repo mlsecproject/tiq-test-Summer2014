@@ -6,3 +6,11 @@
 
 # R data files from past sessions
 .Rdata
+
+# Ignoring our "log" directory
+log/
+
+## Marckdown things
+README.html
+tiq-test-Summer2014_cache/
+tiq-test-Summer2014_files/
