@@ -19,7 +19,13 @@ report bugs and suggest features!
 
 Adding the TIQ-TEST functions
 ```{r, message=FALSE}
+## Some limitations from not being an R package: Setting the Working directory
+tiqtest.dir = file.path("..", "tiq-test")
+current.dir = setwd(tiqtest.dir)
 source("tiq-test.R")
+
+## Setting the root data path to where it should be in this repo
+.tiq.data.setRootPath(file.path(current.dir, "data"))
 ```
 
 ## Acessing the data using TIQ-TEST

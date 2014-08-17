@@ -10,7 +10,9 @@
 # Ignoring our "log" directory
 log/
 
-## Marckdown things
+## Markdown things
 README.html
 tiq-test-Summer2014_cache/
 tiq-test-Summer2014_files/
+.Rproj.user
+*.Rproj
