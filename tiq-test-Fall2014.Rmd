@@ -31,7 +31,7 @@ source("tiq-test.R")
 We have roughly a month of data available on this public dataset, and this is still
 the same dataset as the Summer 2014 presentations:
 ```{r, message=FALSE}
-.tiq.data.getAvailableDates("raw", "public_outbound")
+tiq.data.getAvailableDates("raw", "public_outbound")
 ```
 
 ## Aging Test

@@ -39,7 +39,7 @@ objects for this because they are faster and you can write tighter code around i
 
 We have roughly a month of data available on this public dataset:
 ```{r, message=FALSE}
-.tiq.data.getAvailableDates("raw", "public_outbound")
+tiq.data.getAvailableDates("raw", "public_outbound")
 ```
 
 This is an example of "RAW" (not enriched) outbound data imported from combine output
@@ -89,7 +89,8 @@ Here are some results of running the Novelty test on the inbound data:
 ```{r, fig.height=10, fig.width=12, fig.align='center'}
 inbound.novelty = tiq.test.noveltyTest("public_inbound", "20140615", "20140715", 
                                 select.sources=c("alienvault", "blocklistde", 
-                                                 "dshield", "charleshaley"))
+                                                 "dshield", "charleshaley"),
+  																		 .progress=FALSE)
 tiq.test.plotNoveltyTest(inbound.novelty)
 ```
 
@@ -98,7 +99,8 @@ And results running on the outbound data:
 ```{r, fig.height=10, fig.width=12, fig.align='center'}
 outbound.novelty = tiq.test.noveltyTest("public_outbound", "20140615", "20140715", 
                                 select.sources=c("alienvault", "malwaregroup", 
-                                                 "malwaredomainlist", "malwaredomains"))
+                                                 "malwaredomainlist", "malwaredomains"),
+  																		 .progress=FALSE)
 tiq.test.plotNoveltyTest(outbound.novelty)
 ```
 
@@ -106,27 +108,26 @@ tiq.test.plotNoveltyTest(outbound.novelty)
 
 This is an example of applying the Overlap Test to our inbound dataset
 ```{r, fig.height=10, fig.width=10, fig.align='center'}
-  overlap = tiq.test.overlapTest("public_inbound", "20140715", "enriched", 
-                                 select.sources=NULL)
-  overlap.plot = tiq.test.plotOverlapTest(overlap, title="Overlap Test - Inbound Data - 20140715")
-  print(overlap.plot)
+overlap = tiq.test.overlapTest("public_inbound", "20140715", "enriched", 
+                               select.sources=NULL)
+tiq.test.plotOverlapTest(overlap, title="Overlap Test - Inbound Data - 20140715")
 ```
 
 Similarly, an example applying the Overlap Test to the outbound dataset
 ```{r, fig.height=10, fig.width=10, fig.align='center'}
-  overlap = tiq.test.overlapTest("public_outbound", "20140715", "enriched", 
-                                 select.sources=NULL)
-  overlap.plot = tiq.test.plotOverlapTest(overlap, title="Overlap Test - Outbound Data - 20140715")
-  print(overlap.plot)
+overlap = tiq.test.overlapTest("public_outbound", "20140715", "enriched", 
+                               select.sources=NULL)
+tiq.test.plotOverlapTest(overlap, title="Overlap Test - Outbound Data - 20140715")
 ```
 
 What about that day when `malwaredomainlist` and `malwaredomains` moved together on the novelty test?
 ```{r, fig.height=10, fig.width=10, fig.align='center'}
-  overlap = tiq.test.overlapTest("public_outbound", "20140629", "enriched", 
-                                 select.sources=c("alienvault", "malwaredomainlist",
-                                                  "malwaredomains", "zeus"))
-  overlap.plot = tiq.test.plotOverlapTest(overlap, title="Overlap Test - Outbound Data Sources - 20140629")
-  print(overlap.plot)
+overlap = tiq.test.overlapTest("public_outbound", "20140629", "enriched", 
+                               select.sources=c("public_outbound.alienvault", 
+                                                "public_outbound.malwaredomainlist",
+                                                "public_outbound.malwaredomains",
+                                                "public_outbound.zeus"))
+tiq.test.plotOverlapTest(overlap, title="Overlap Test - Outbound Data Sources - 20140629")
 ```
 
 ## Population Test Plots
@@ -135,15 +136,15 @@ With the population data we can generate some plot to compare the top quantities
 of reported IP addresses on a specific date by Country
 
 ```{r, fig.height=10, fig.width=10, fig.align='center'}
-  outbound.pop = tiq.test.extractPopulationFromTI("public_outbound", "country", 
-                                                  date = "20140711",
-                                                  select.sources=NULL, split.ti=F)
-  inbound.pop = tiq.test.extractPopulationFromTI("public_inbound", "country", 
-                                                 date = "20140711",
-                                                 select.sources=NULL, split.ti=F)
+outbound.pop = tiq.test.extractPopulationFromTI("public_outbound", "country", 
+                                                date = "20140711",
+                                                select.sources=NULL, split.ti=F)
+inbound.pop = tiq.test.extractPopulationFromTI("public_inbound", "country", 
+                                               date = "20140711",
+                                               select.sources=NULL, split.ti=F)
 
-  complete.pop = tiq.data.loadPopulation("mmgeo", "country")
-  tiq.test.plotPopulationBars(c(inbound.pop, outbound.pop, complete.pop), "country")
+complete.pop = tiq.data.loadPopulation("mmgeo", "country")
+tiq.test.plotPopulationBars(c(inbound.pop, outbound.pop, complete.pop), "country")
 ```
 
 Or we can compare them by the AS that those IP addresses are a part of. Of course,
@@ -151,18 +152,17 @@ there is an infinite number of more AS's then Countries, so the distribution is 
 granular.
 
 ```{r, fig.height=10, fig.width=10, fig.align='center'}
+outbound.pop = tiq.test.extractPopulationFromTI("public_outbound", 
+                                                c("asnumber", "asname"), 
+                                                date = "20140711",
+                                                select.sources=NULL, split.ti=F)
+inbound.pop = tiq.test.extractPopulationFromTI("public_inbound", 
+                                               c("asnumber", "asname"), 
+                                               date = "20140711",
+                                               select.sources=NULL, split.ti=F)
 
-  outbound.pop = tiq.test.extractPopulationFromTI("public_outbound", 
-                                                  c("asnumber", "asname"), 
-                                                  date = "20140711",
-                                                  select.sources=NULL, split.ti=F)
-  inbound.pop = tiq.test.extractPopulationFromTI("public_inbound", 
-                                                 c("asnumber", "asname"), 
-                                                 date = "20140711",
-                                                 select.sources=NULL, split.ti=F)
-
-  complete.pop = tiq.data.loadPopulation("mmasn", c("asnumber", "asname"))
-  tiq.test.plotPopulationBars(c(inbound.pop, outbound.pop, complete.pop), "asname")
+complete.pop = tiq.data.loadPopulation("mmasn", c("asnumber", "asname"))
+tiq.test.plotPopulationBars(c(inbound.pop, outbound.pop, complete.pop), "asname")
 ```
 
 ## Population Test Inference - Country data
